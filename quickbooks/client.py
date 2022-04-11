@@ -207,7 +207,7 @@ class QuickBooks(object):
                 'Connection': 'close'
             })
 
-            binary_data = str(base64.b64encode(attachment.read()).decode('ascii'))
+            binary_data = str(base64.b64encode(attachment.read() if not file_data else file_data).decode('ascii')) 
 
             content_type = json.loads(request_body)['ContentType']
 
@@ -307,11 +307,11 @@ class QuickBooks(object):
             else:
                 raise exceptions.QuickbooksException(message, code, detail)
 
-    def create_object(self, qbbo, request_body, _file_path=None, request_id=None):
+    def create_object(self, qbbo, request_body, _file_path=None, request_id=None, _file_data=None):
         self.isvalid_object_name(qbbo)
 
         url = "{0}/company/{1}/{2}".format(self.api_url, self.company_id, qbbo.lower())
-        results = self.post(url, request_body, file_path=_file_path, request_id=request_id)
+        results = self.post(url, request_body, file_path=_file_path, request_id=request_id, file_data=_file_data)
 
         return results
 
