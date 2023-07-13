@@ -44,6 +44,7 @@ class VendorCredit(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEn
         self.FromAccountRef = None
         self.ToAccountRef = None
 
+        self.LinkedTxn = []
         self.Line = []
 
     def __str__(self):
