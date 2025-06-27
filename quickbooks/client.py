@@ -381,3 +381,23 @@ class QuickBooks(object):
             self.handle_exceptions(result["Fault"])
         else:
             return response.content
+
+
+def revoke_token(self, refresh_token=None):
+        
+        if not self.auth_client:
+            raise exceptions.QuickbooksException('No auth_client available for token revocation')
+        
+        token_to_revoke = refresh_token or getattr(self, 'refresh_token', None)
+        
+        if not token_to_revoke:
+            raise exceptions.QuickbooksException('No refresh token available for revocation')
+        
+        try:
+            self.auth_client.revoke(token_to_revoke)
+            return True
+            
+        except Exception as e:
+            print("Failed to revoke QuickBooks OAuth token: {0}".format(str(e)))
+            return False
+            
