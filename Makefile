@@ -1,6 +1,6 @@
 
 publish: clean
-	python setup.py sdist
+	uv build
 	twine upload dist/*
 
 clean:
