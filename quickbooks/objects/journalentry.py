@@ -1,24 +1,28 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksBaseObject, Ref, QuickbooksManagedObject, QuickbooksTransactionEntity, \
-    LinkedTxnMixin
-from .tax import TxnTaxDetail
-from .detailline import DetailLine, DescriptionOnlyLine
-from ..mixins import DeleteMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import (
+    LinkedTxnMixin,
+    QuickbooksBaseObject,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import DescriptionOnlyLine, DetailLine
+from quickbooks.objects.tax import TxnTaxDetail
 
 
 class Entity(QuickbooksBaseObject):
-    class_dict = {
-        "EntityRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"EntityRef": Ref}
 
     def __init__(self):
-        super(Entity, self).__init__()
+        super().__init__()
         self.Type = ""
         self.EntityRef = None
 
 
 class JournalEntryLineDetail(QuickbooksBaseObject):
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "Entity": Entity,
         "AccountRef": Ref,
         "ClassRef": Ref,
@@ -27,7 +31,7 @@ class JournalEntryLineDetail(QuickbooksBaseObject):
     }
 
     def __init__(self):
-        super(JournalEntryLineDetail, self).__init__()
+        super().__init__()
         self.PostingType = ""
         self.TaxApplicableOn = "Sales"
         self.TaxAmount = 0
@@ -41,17 +45,14 @@ class JournalEntryLineDetail(QuickbooksBaseObject):
 
 
 class JournalEntryLine(DetailLine):
-    class_dict = {
-        "JournalEntryLineDetail": JournalEntryLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"JournalEntryLineDetail": JournalEntryLineDetail}
 
     def __init__(self):
-        super(JournalEntryLine, self).__init__()
+        super().__init__()
         self.DetailType = "JournalEntryLineDetail"
         self.JournalEntryLineDetail = None
 
 
-@python_2_unicode_compatible
 class JournalEntry(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: Journal Entry is a transaction in which:
@@ -63,27 +64,22 @@ class JournalEntry(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEn
         register and General Journal on reports that list transactions.
     """
 
-    class_dict = {
-        "TxnTaxDetail": TxnTaxDetail,
-        "CurrencyRef": Ref,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"TxnTaxDetail": TxnTaxDetail, "CurrencyRef": Ref}
 
-    list_dict = {
-        "Line": DetailLine
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Line": DetailLine}
 
-    detail_dict = {
+    detail_dict: ClassVar[dict[str, type]] = {
         "DescriptionOnly": DescriptionOnlyLine,
-        "JournalEntryLineDetail": JournalEntryLine
+        "JournalEntryLineDetail": JournalEntryLine,
     }
 
     qbo_object_name = "JournalEntry"
 
     def __init__(self):
-        super(JournalEntry, self).__init__()
+        super().__init__()
         self.Adjustment = False
         self.TxnDate = ""
-        #self.TxnSource = ""
+        # self.TxnSource = ""
         self.DocNumber = ""
         self.PrivateNote = ""
         self.TotalAmt = 0

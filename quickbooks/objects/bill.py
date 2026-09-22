@@ -1,21 +1,18 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
 
-from quickbooks.objects.detailline import DetailLine, ItemBasedExpenseLine, AccountBasedExpenseLine, \
-    TDSLine
-from .base import Ref, LinkedTxn, QuickbooksManagedObject, QuickbooksTransactionEntity, \
-    LinkedTxnMixin
-from .tax import TxnTaxDetail
-from ..mixins import DeleteMixin
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import LinkedTxn, LinkedTxnMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
+from quickbooks.objects.detailline import AccountBasedExpenseLine, DetailLine, ItemBasedExpenseLine, TDSLine
+from quickbooks.objects.tax import TxnTaxDetail
 
 
-@python_2_unicode_compatible
 class Bill(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: A Bill entity is an AP transaction representing a request-for-payment from a third party for
     goods/services rendered and/or received.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "SalesTermRef": Ref,
         "CurrencyRef": Ref,
         "APAccountRef": Ref,
@@ -25,12 +22,9 @@ class Bill(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, Li
         "TxnTaxDetail": TxnTaxDetail,
     }
 
-    list_dict = {
-        "Line": DetailLine,
-        "LinkedTxn": LinkedTxn,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Line": DetailLine, "LinkedTxn": LinkedTxn}
 
-    detail_dict = {
+    detail_dict: ClassVar[dict[str, type]] = {
         "ItemBasedExpenseLineDetail": ItemBasedExpenseLine,
         "AccountBasedExpenseLineDetail": AccountBasedExpenseLine,
         "TDSLineDetail": TDSLine,
@@ -39,7 +33,7 @@ class Bill(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, Li
     qbo_object_name = "Bill"
 
     def __init__(self):
-        super(Bill, self).__init__()
+        super().__init__()
 
         self.DueDate = ""
         self.Balance = 0
@@ -79,4 +73,3 @@ class Bill(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, Li
         ref.value = self.Id
 
         return ref
-

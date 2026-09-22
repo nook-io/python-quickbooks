@@ -1,19 +1,19 @@
-from six import python_2_unicode_compatible
-from ..mixins import ToJsonMixin, FromJsonMixin
+from typing import ClassVar
+
+from quickbooks.mixins import FromJsonMixin, ToJsonMixin
 
 
-class BatchOperation(object):
+class BatchOperation:
     CREATE = "create"
     UPDATE = "update"
     DELETE = "delete"
 
 
-@python_2_unicode_compatible
 class FaultError(FromJsonMixin):
     qbo_object_name = "Error"
 
     def __init__(self):
-        super(FaultError, self).__init__()
+        super().__init__()
 
         self.Message = ""
         self.code = ""
@@ -21,40 +21,36 @@ class FaultError(FromJsonMixin):
         self.element = ""
 
     def __str__(self):
-        return "Code: {0} Message: {1} Detail: {2}".format(self.code, self.Message, self.Detail)
+        return f"Code: {self.code} Message: {self.Message} Detail: {self.Detail}"
 
     def __repr__(self):
         return self.__str__()
 
 
 class Fault(FromJsonMixin):
-    list_dict = {
-        "Error": FaultError
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Error": FaultError}
 
     qbo_object_name = "Fault"
 
     def __init__(self):
-        super(Fault, self).__init__()
+        super().__init__()
 
         self.type = ""
         self.original_object = None
         self.Error = []
 
     def __repr__(self):
-        return "{0} Errors".format(len(self.Error))
+        return f"{len(self.Error)} Errors"
 
 
 class BatchItemResponse(FromJsonMixin):
     qbo_object_name = "BatchItemResponse"
 
     def __init__(self):
-        super(BatchItemResponse, self).__init__()
+        super().__init__()
         self.bId = ""
         self.list_dict = {}
-        self.class_dict = {
-            "Fault": Fault
-        }
+        self.class_dict = {"Fault": Fault}
 
         self._original_object = None
         self.Fault = None
@@ -68,8 +64,7 @@ class BatchItemResponse(FromJsonMixin):
         return self._original_object
 
 
-class BatchResponse(object):
-
+class BatchResponse:
     def __init__(self):
         self.batch_responses = []
         self.original_list = []
@@ -78,8 +73,8 @@ class BatchResponse(object):
 
 
 class BatchItemRequest(ToJsonMixin):
-    class_dict = {}
-    list_dict = {}
+    class_dict: ClassVar[dict[str, type]] = {}
+    list_dict: ClassVar[dict[str, type]] = {}
 
     qbo_object_name = "BatchItemRequest"
 
@@ -98,9 +93,7 @@ class BatchItemRequest(ToJsonMixin):
 
 
 class IntuitBatchRequest(ToJsonMixin):
-    list_dict = {
-        "BatchItemRequest": BatchItemRequest
-    }
+    list_dict: ClassVar[dict[str, type]] = {"BatchItemRequest": BatchItemRequest}
 
     def __init__(self):
         self.BatchItemRequest = []

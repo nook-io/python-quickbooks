@@ -1,11 +1,17 @@
 import uuid
 
-from .client import QuickBooks
-from .exceptions import QuickbooksException
-from .objects.batchrequest import IntuitBatchRequest, BatchItemRequest, BatchOperation, BatchResponse, BatchItemResponse
+from quickbooks.client import QuickBooks
+from quickbooks.exceptions import QuickbooksException
+from quickbooks.objects.batchrequest import (
+    BatchItemRequest,
+    BatchItemResponse,
+    BatchOperation,
+    BatchResponse,
+    IntuitBatchRequest,
+)
 
 
-class BatchManager(object):
+class BatchManager:
     def __init__(self, operation, max_request_items=30):
         self._max_request_items = max_request_items
 
@@ -18,7 +24,7 @@ class BatchManager(object):
         batch_response = BatchResponse()
 
         while len(obj_list) > 0:
-            temp_list = obj_list[:self._max_request_items]
+            temp_list = obj_list[: self._max_request_items]
             obj_list = [item for item in obj_list if item not in temp_list]
             result = self.process_batch(temp_list, qb=qb)
 
@@ -35,9 +41,7 @@ class BatchManager(object):
 
         batch = self.list_to_batch_request(obj_list)
         json_data = qb.batch_operation(batch.to_json())
-        batch_response = self.batch_results_to_list(json_data, batch, obj_list)
-
-        return batch_response
+        return self.batch_results_to_list(json_data, batch, obj_list)
 
     def list_to_batch_request(self, obj_list):
         batch = IntuitBatchRequest()
@@ -56,10 +60,10 @@ class BatchManager(object):
         response = BatchResponse()
         response.original_list = original_list
 
-        for data in json_data['BatchItemResponse']:
+        for data in json_data["BatchItemResponse"]:
             response_item = BatchItemResponse.from_json(data)
 
-            batch_item = [obj for obj in batch.BatchItemRequest if obj.bId == response_item.bId][0]
+            batch_item = next((obj for obj in batch.BatchItemRequest if obj.bId == response_item.bId), None)
             response_item.set_object(batch_item.get_object())
 
             response.batch_responses.append(response_item)

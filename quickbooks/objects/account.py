@@ -1,8 +1,8 @@
-from six import python_2_unicode_compatible
-from .base import Ref, QuickbooksManagedObject, QuickbooksTransactionEntity
+from typing import ClassVar
+
+from quickbooks.objects.base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class Account(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: Account is a component of a Chart Of Accounts, and is part of a Ledger. Used to record a total
@@ -12,16 +12,12 @@ class Account(QuickbooksManagedObject, QuickbooksTransactionEntity):
     is hidden for display purposes. References to inactive objects are left intact.
     """
 
-    class_dict = {
-        "CurrencyRef": Ref,
-        "ParentRef": Ref,
-        "TaxCodeRef": Ref,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"CurrencyRef": Ref, "ParentRef": Ref, "TaxCodeRef": Ref}
 
     qbo_object_name = "Account"
 
     def __init__(self):
-        super(Account, self).__init__()
+        super().__init__()
 
         self.Name = ""
         self.SubAccount = False

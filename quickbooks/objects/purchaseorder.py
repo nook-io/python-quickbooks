@@ -1,20 +1,26 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
 
-from quickbooks.objects.detailline import DetailLine, ItemBasedExpenseLine, AccountBasedExpenseLine, \
-    TDSLine
-from .base import Ref, Address, QuickbooksManagedObject, LinkedTxnMixin, \
-    QuickbooksTransactionEntity, CustomField, LinkedTxn
-from .tax import TxnTaxDetail
-from ..mixins import DeleteMixin, SendMixin
+from quickbooks.mixins import DeleteMixin, SendMixin
+from quickbooks.objects.base import (
+    Address,
+    CustomField,
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import AccountBasedExpenseLine, DetailLine, ItemBasedExpenseLine, TDSLine
+from quickbooks.objects.tax import TxnTaxDetail
 
 
-@python_2_unicode_compatible
 class PurchaseOrder(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin, SendMixin):
     """
     QBO definition: The PurchaseOrder entity is a non-posting transaction representing a request to purchase
     goods or services from a third party.
     """
-    class_dict = {
+
+    class_dict: ClassVar[dict[str, type]] = {
         "VendorAddr": Address,
         "ShipAddr": Address,
         "VendorRef": Ref,
@@ -25,16 +31,12 @@ class PurchaseOrder(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionE
         "ShipMethodRef": Ref,
         "TaxCodeRef": Ref,
         "CurrencyRef": Ref,
-        "TxnTaxDetail": TxnTaxDetail
+        "TxnTaxDetail": TxnTaxDetail,
     }
 
-    list_dict = {
-        "Line": DetailLine,
-        "CustomField": CustomField,
-        "LinkedTxn": LinkedTxn,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Line": DetailLine, "CustomField": CustomField, "LinkedTxn": LinkedTxn}
 
-    detail_dict = {
+    detail_dict: ClassVar[dict[str, type]] = {
         "ItemBasedExpenseLineDetail": ItemBasedExpenseLine,
         "AccountBasedExpenseLineDetail": AccountBasedExpenseLine,
         "TDSLineDetail": TDSLine,
@@ -43,7 +45,7 @@ class PurchaseOrder(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionE
     qbo_object_name = "PurchaseOrder"
 
     def __init__(self):
-        super(PurchaseOrder, self).__init__()
+        super().__init__()
         self.POStatus = None
         self.DocNumber = None
         self.TxnDate = None

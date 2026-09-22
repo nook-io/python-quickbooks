@@ -1,20 +1,23 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksBaseObject, Ref, LinkedTxn, \
-    QuickbooksManagedObject, QuickbooksTransactionEntity
-from ..client import QuickBooks
-from .creditcardpayment import CreditCardPayment
-from ..mixins import DeleteMixin
 import json
+from typing import ClassVar
+
+from quickbooks.client import QuickBooks
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import (
+    LinkedTxn,
+    QuickbooksBaseObject,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.creditcardpayment import CreditCardPayment
 
 
-@python_2_unicode_compatible
 class PaymentLine(QuickbooksBaseObject):
-    list_dict = {
-        "LinkedTxn": LinkedTxn,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"LinkedTxn": LinkedTxn}
 
     def __init__(self):
-        super(PaymentLine, self).__init__()
+        super().__init__()
         self.Amount = 0
         self.LinkedTxn = []
 
@@ -22,7 +25,6 @@ class PaymentLine(QuickbooksBaseObject):
         return str(self.Amount)
 
 
-@python_2_unicode_compatible
 class Payment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: A Payment entity records a payment in QuickBooks. The payment can be
@@ -42,7 +44,7 @@ class Payment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity)
         - The sequence in which the Lines are received is the sequence in which lines are preserved.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "ARAccountRef": Ref,
         "CustomerRef": Ref,
         "PaymentMethodRef": Ref,
@@ -51,14 +53,12 @@ class Payment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity)
         "CreditCardPayment": CreditCardPayment,
     }
 
-    list_dict = {
-        "Line": PaymentLine
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Line": PaymentLine}
 
     qbo_object_name = "Payment"
 
     def __init__(self):
-        super(Payment, self).__init__()
+        super().__init__()
         self.PaymentRefNum = None
         self.TotalAmt = None
         self.UnappliedAmt = None  # Readonly
@@ -84,19 +84,13 @@ class Payment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity)
             qb = QuickBooks()
 
         if not self.Id:
-            raise qb.QuickbooksException('Cannot void unsaved object')
+            raise qb.QuickbooksException("Cannot void unsaved object")
 
-        data = {
-            'Id': self.Id,
-            'SyncToken': self.SyncToken,
-            'sparse': True
-        }
+        data = {"Id": self.Id, "SyncToken": self.SyncToken, "sparse": True}
 
         endpoint = self.qbo_object_name.lower()
-        url = "{0}/company/{1}/{2}".format(qb.api_url, qb.company_id, endpoint)
-        results = qb.post(url, json.dumps(data), params={'operation': 'update', 'include': 'void'})
-
-        return results
+        url = f"{qb.api_url}/company/{qb.company_id}/{endpoint}"
+        return qb.post(url, json.dumps(data), params={"operation": "update", "include": "void"})
 
     def __str__(self):
         return str(self.TotalAmt)

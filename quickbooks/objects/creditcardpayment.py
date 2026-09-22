@@ -1,12 +1,13 @@
-from .base import QuickbooksBaseObject
+from typing import ClassVar
+
+from quickbooks.objects.base import QuickbooksBaseObject
 
 
 class CreditChargeInfo(QuickbooksBaseObject):
-    class_dict = {
-    }
+    class_dict: ClassVar[dict[str, type]] = {}
 
     def __init__(self):
-        super(CreditChargeInfo, self).__init__()
+        super().__init__()
         self.Type = ""
         self.NameOnAcct = ""
         self.CcExpiryMonth = 0
@@ -19,7 +20,7 @@ class CreditChargeInfo(QuickbooksBaseObject):
 
 class CreditChargeResponse(QuickbooksBaseObject):
     def __init__(self):
-        super(CreditChargeResponse, self).__init__()
+        super().__init__()
 
         self.CCTransId = ""
         self.AuthCode = ""
@@ -28,12 +29,12 @@ class CreditChargeResponse(QuickbooksBaseObject):
 
 
 class CreditCardPayment(QuickbooksBaseObject):
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "CreditChargeInfo": CreditChargeInfo,
-        "CreditChargeResponse": CreditChargeResponse
+        "CreditChargeResponse": CreditChargeResponse,
     }
 
     def __init__(self):
-        super(CreditCardPayment, self).__init__()
+        super().__init__()
         self.CreditChargeInfo = None
         self.CreditChargeResponse = None

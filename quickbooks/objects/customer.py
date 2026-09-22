@@ -1,9 +1,16 @@
-from six import python_2_unicode_compatible
-from .base import Address, PhoneNumber, EmailAddress, WebAddress, Ref, QuickbooksManagedObject, \
-    QuickbooksTransactionEntity
+from typing import ClassVar
+
+from quickbooks.objects.base import (
+    Address,
+    EmailAddress,
+    PhoneNumber,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+    WebAddress,
+)
 
 
-@python_2_unicode_compatible
 class Customer(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: A customer is a consumer of the service or product that your business offers. The Customer object
@@ -16,7 +23,7 @@ class Customer(QuickbooksManagedObject, QuickbooksTransactionEntity):
       -Properties managed by a Homeowner Association or Property Management Company.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "BillAddr": Address,
         "ShipAddr": Address,
         "PrimaryPhone": PhoneNumber,
@@ -36,7 +43,7 @@ class Customer(QuickbooksManagedObject, QuickbooksTransactionEntity):
     qbo_object_name = "Customer"
 
     def __init__(self):
-        super(Customer, self).__init__()
+        super().__init__()
         self.Title = ""
         self.GivenName = ""
         self.MiddleName = ""

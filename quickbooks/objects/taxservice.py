@@ -1,15 +1,15 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksBaseObject
-from ..mixins import UpdateMixin
-from ..client import QuickBooks
+from typing import ClassVar
+
+from quickbooks.client import QuickBooks
+from quickbooks.mixins import UpdateMixin
+from quickbooks.objects.base import QuickbooksBaseObject
 
 
-@python_2_unicode_compatible
 class TaxRateDetails(QuickbooksBaseObject):
     qbo_object_name = "TaxRateDetails"
 
     def __init__(self):
-        super(TaxRateDetails, self).__init__()
+        super().__init__()
         self.TaxRateName = None
         self.TaxRateId = None
         self.RateValue = None
@@ -20,7 +20,6 @@ class TaxRateDetails(QuickbooksBaseObject):
         return self.TaxRateName
 
 
-@python_2_unicode_compatible
 class TaxService(QuickbooksBaseObject, UpdateMixin):
     """
     QBO definition: The TaxService endpoint allows you to perform the following actions:
@@ -33,14 +32,12 @@ class TaxService(QuickbooksBaseObject, UpdateMixin):
     cannot create new tax agencies via the TaxService endpoint.
     """
 
-    list_dict = {
-        "TaxRateDetails": TaxRateDetails
-    }
+    list_dict: ClassVar[dict[str, type]] = {"TaxRateDetails": TaxRateDetails}
 
     qbo_object_name = "TaxService/Taxcode"
 
     def __init__(self):
-        super(TaxService, self).__init__()
+        super().__init__()
         self.TaxCode = None  # Required
         self.TaxCodeId = None  # Readonly - this is the unique database Id (called Id on every other model...)
 

@@ -1,17 +1,18 @@
 from datetime import datetime
-from .client import QuickBooks
-from .objects.changedatacapture import QueryResponse, CDCResponse
-from .helpers import qb_datetime_format
+
+from quickbooks.client import QuickBooks
+from quickbooks.helpers import qb_datetime_format
+from quickbooks.objects.changedatacapture import CDCResponse, QueryResponse
 
 
 def change_data_capture(qbo_class_list, timestamp, qb=None):
     if qb is None:
         qb = QuickBooks()
 
-    cdc_class_dict = dict((cls.qbo_object_name, cls) for cls in qbo_class_list)
+    cdc_class_dict = {cls.qbo_object_name: cls for cls in qbo_class_list}
 
     cdc_class_names = list(cdc_class_dict.keys())
-    entity_list_string = ','.join(cdc_class_names)
+    entity_list_string = ",".join(cdc_class_names)
 
     if isinstance(timestamp, datetime):
         timestamp_string = qb_datetime_format(timestamp)
@@ -20,10 +21,10 @@ def change_data_capture(qbo_class_list, timestamp, qb=None):
 
     resp = qb.change_data_capture(entity_list_string, timestamp_string)
 
-    cdc_response_dict = resp.pop('CDCResponse')
+    cdc_response_dict = resp.pop("CDCResponse")
     cdc_response = CDCResponse.from_json(resp)
 
-    query_response_list = cdc_response_dict[0]['QueryResponse']
+    query_response_list = cdc_response_dict[0]["QueryResponse"]
     for query_response_dict in query_response_list:
         qb_object_names = [x for x in query_response_dict if x in cdc_class_names]
 

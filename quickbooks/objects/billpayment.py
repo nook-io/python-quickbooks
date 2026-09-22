@@ -1,19 +1,23 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksBaseObject, Ref, LinkedTxn, QuickbooksManagedObject, LinkedTxnMixin, \
-    QuickbooksTransactionEntity
-from ..mixins import DeleteMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import (
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksBaseObject,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
 
 
-@python_2_unicode_compatible
 class CheckPayment(QuickbooksBaseObject):
-    class_dict = {
-        "BankAccountRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"BankAccountRef": Ref}
 
     qbo_object_name = "CheckPayment"
 
     def __init__(self):
-        super(CheckPayment, self).__init__()
+        super().__init__()
         self.PrintStatus = "NotSet"
         self.BankAccountRef = None
 
@@ -22,27 +26,22 @@ class CheckPayment(QuickbooksBaseObject):
 
 
 class BillPaymentCreditCard(QuickbooksBaseObject):
-    class_dict = {
-        "CCAccountRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"CCAccountRef": Ref}
 
     qbo_object_name = "BillPaymentCreditCard"
 
     def __init__(self):
-        super(BillPaymentCreditCard, self).__init__()
+        super().__init__()
         self.CCAccountRef = None
 
 
-@python_2_unicode_compatible
 class BillPaymentLine(QuickbooksBaseObject):
-    list_dict = {
-        "LinkedTxn": LinkedTxn
-    }
+    list_dict: ClassVar[dict[str, type]] = {"LinkedTxn": LinkedTxn}
 
     qbo_object_name = "Line"
 
     def __init__(self):
-        super(BillPaymentLine, self).__init__()
+        super().__init__()
         self.Amount = 0
         self.LinkedTxn = []
 
@@ -50,7 +49,6 @@ class BillPaymentLine(QuickbooksBaseObject):
         return str(self.Amount)
 
 
-@python_2_unicode_compatible
 class BillPayment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: A BillPayment entity represents the financial transaction of payment
@@ -62,23 +60,21 @@ class BillPayment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEnt
     exposed as such on the QuickBooks UI. The total amount cannot be negative.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "VendorRef": Ref,
         "CheckPayment": CheckPayment,
         "CreditCardPayment": BillPaymentCreditCard,
         "APAccountRef": Ref,
         "DepartmentRef": Ref,
-        "CurrencyRef": Ref
+        "CurrencyRef": Ref,
     }
 
-    list_dict = {
-        "Line": BillPaymentLine
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Line": BillPaymentLine}
 
     qbo_object_name = "BillPayment"
 
     def __init__(self):
-        super(BillPayment, self).__init__()
+        super().__init__()
         self.PayType = ""
         self.TotalAmt = 0
         self.PrivateNote = ""

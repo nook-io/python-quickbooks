@@ -1,35 +1,31 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
+
 from quickbooks.mixins import ListMixin, ReadMixin
-from .base import QuickbooksTransactionEntity, Ref, QuickbooksBaseObject
+from quickbooks.objects.base import QuickbooksBaseObject, QuickbooksTransactionEntity, Ref
 
 
 class TaxRateDetail(QuickbooksBaseObject):
-    class_dict = {
-        "TaxRateRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"TaxRateRef": Ref}
 
     qbo_object_name = "TaxRateDetail"
 
     def __init__(self):
-        super(TaxRateDetail, self).__init__()
+        super().__init__()
         self.TaxTypeApplicable = ""
         self.TaxOrder = 0
         self.TaxRateRef = None
 
 
 class TaxRateList(QuickbooksBaseObject):
-    list_dict = {
-        "TaxRateDetail": TaxRateDetail
-    }
+    list_dict: ClassVar[dict[str, type]] = {"TaxRateDetail": TaxRateDetail}
 
     qbo_object_name = "TaxRateList"
 
     def __init__(self):
-        super(TaxRateList, self).__init__()
+        super().__init__()
         self.TaxRateDetail = []
 
 
-@python_2_unicode_compatible
 class TaxCode(QuickbooksTransactionEntity, QuickbooksBaseObject, ReadMixin, ListMixin):
     """
     QBO definition: A TaxCode object is used to track the taxable or non-taxable status of products,
@@ -39,15 +35,12 @@ class TaxCode(QuickbooksTransactionEntity, QuickbooksBaseObject, ReadMixin, List
     certain sales. See Global tax model for more information about using TaxCode objects and the tax model in general.
     """
 
-    class_dict = {
-        "SalesTaxRateList": TaxRateList,
-        "PurchaseTaxRateList": TaxRateList,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"SalesTaxRateList": TaxRateList, "PurchaseTaxRateList": TaxRateList}
 
     qbo_object_name = "TaxCode"
 
     def __init__(self):
-        super(TaxCode, self).__init__()
+        super().__init__()
         # All values are readonly - TaxCodes are created with the taxservice api
         self.Name = None
         self.Description = None

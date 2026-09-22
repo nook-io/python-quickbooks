@@ -1,22 +1,19 @@
-from six import python_2_unicode_compatible
-from .base import Address, PhoneNumber, QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
+from typing import ClassVar
+
+from quickbooks.objects.base import Address, PhoneNumber, QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class Employee(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: Employee represents the people who are working for the company.
     """
 
-    class_dict = {
-        "PrimaryAddr": Address,
-        "PrimaryPhone": PhoneNumber
-    }
+    class_dict: ClassVar[dict[str, type]] = {"PrimaryAddr": Address, "PrimaryPhone": PhoneNumber}
 
     qbo_object_name = "Employee"
 
     def __init__(self):
-        super(Employee, self).__init__()
+        super().__init__()
         self.SSN = ""
 
         self.GivenName = ""

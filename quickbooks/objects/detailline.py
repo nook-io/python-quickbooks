@@ -1,16 +1,13 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksBaseObject, Ref, CustomField, LinkedTxn, MarkupInfo
+from typing import ClassVar
+
+from quickbooks.objects.base import CustomField, LinkedTxn, MarkupInfo, QuickbooksBaseObject, Ref
 
 
-@python_2_unicode_compatible
 class DetailLine(QuickbooksBaseObject):
-    list_dict = {
-        "LinkedTxn": LinkedTxn,
-        "CustomField": CustomField,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"LinkedTxn": LinkedTxn, "CustomField": CustomField}
 
     def __init__(self):
-        super(DetailLine, self).__init__()
+        super().__init__()
         self.Id = None
         self.LineNum = 0
         self.Description = None
@@ -20,19 +17,16 @@ class DetailLine(QuickbooksBaseObject):
         self.CustomField = []
 
     def __str__(self):
-        return "[{0}] {1} {2}".format(self.LineNum, self.Description, self.Amount)
+        return f"[{self.LineNum}] {self.Description} {self.Amount}"
 
 
 class DiscountOverride(QuickbooksBaseObject):
-    class_dict = {
-        "DiscountRef": Ref,
-        "DiscountAccountRef": Ref,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"DiscountRef": Ref, "DiscountAccountRef": Ref}
 
     qbo_object_name = "DiscountOverride"
 
     def __init__(self):
-        super(DiscountOverride, self).__init__()
+        super().__init__()
         self.PercentBased = False
         self.DiscountPercent = 0
         self.DiscountRef = None
@@ -40,15 +34,15 @@ class DiscountOverride(QuickbooksBaseObject):
 
 
 class DiscountLineDetail(QuickbooksBaseObject):
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "Discount": DiscountOverride,
         "ClassRef": Ref,
         "TaxCodeRef": Ref,
-        "DiscountAccountRef": Ref
+        "DiscountAccountRef": Ref,
     }
 
     def __init__(self):
-        super(DiscountLineDetail, self).__init__()
+        super().__init__()
 
         self.Discount = None
         self.ClassRef = None
@@ -58,51 +52,42 @@ class DiscountLineDetail(QuickbooksBaseObject):
 
 
 class DiscountLine(DetailLine):
-    class_dict = {
-        "DiscountLineDetail": DiscountLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"DiscountLineDetail": DiscountLineDetail}
 
     def __init__(self):
-        super(DiscountLine, self).__init__()
+        super().__init__()
         self.DetailType = "DiscountLineDetail"
         self.DiscountLineDetail = None
 
 
 class SubtotalLineDetail(QuickbooksBaseObject):
-    class_dict = {
-        "ItemRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"ItemRef": Ref}
 
     def __init__(self):
-        super(SubtotalLineDetail, self).__init__()
+        super().__init__()
         self.ItemRef = None
 
 
 class SubtotalLine(DetailLine):
-    class_dict = {
-        "SubtotalLineDetail": SubtotalLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"SubtotalLineDetail": SubtotalLineDetail}
 
     def __init__(self):
-        super(SubtotalLine, self).__init__()
+        super().__init__()
         self.DetailType = "SubTotalLineDetail"
         self.SubtotalLineDetail = None
 
 
 class DescriptionLineDetail(QuickbooksBaseObject):
-    class_dict = {
-        "TaxCodeRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"TaxCodeRef": Ref}
 
     def __init__(self):
-        super(DescriptionLineDetail, self).__init__()
+        super().__init__()
         self.ServiceDate = ""
         self.TaxCodeRef = None
 
 
-@python_2_unicode_compatible
 class SalesItemLineDetail(QuickbooksBaseObject):
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "ItemRef": Ref,
         "ClassRef": Ref,
         "TaxCodeRef": Ref,
@@ -111,7 +96,7 @@ class SalesItemLineDetail(QuickbooksBaseObject):
     }
 
     def __init__(self):
-        super(SalesItemLineDetail, self).__init__()
+        super().__init__()
         self.UnitPrice = 0
         self.Qty = 0
         self.ServiceDate = ""
@@ -128,12 +113,10 @@ class SalesItemLineDetail(QuickbooksBaseObject):
 
 
 class SalesItemLine(DetailLine):
-    class_dict = {
-        "SalesItemLineDetail": SalesItemLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"SalesItemLineDetail": SalesItemLineDetail}
 
     def __init__(self):
-        super(SalesItemLine, self).__init__()
+        super().__init__()
         self.DetailType = "SalesItemLineDetail"
         self.SalesItemLineDetail = None
 
@@ -143,30 +126,25 @@ class GroupLineDetail(QuickbooksBaseObject):
 
 
 class GroupLine(DetailLine):
-    class_dict = {
-        "GroupLineDetail": GroupLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"GroupLineDetail": GroupLineDetail}
 
     def __init__(self):
-        super(GroupLine, self).__init__()
+        super().__init__()
         self.DetailType = "GroupLineDetail"
         self.GroupLineDetail = None
 
 
 class DescriptionOnlyLine(DetailLine):
-    class_dict = {
-        "DescriptionLineDetail": DescriptionLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"DescriptionLineDetail": DescriptionLineDetail}
 
     def __init__(self):
-        super(DescriptionOnlyLine, self).__init__()
+        super().__init__()
         self.DetailType = "DescriptionOnly"
         self.DescriptionLineDetail = None
 
 
-@python_2_unicode_compatible
 class AccountBasedExpenseLineDetail(QuickbooksBaseObject):
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "CustomerRef": Ref,
         "AccountRef": Ref,
         "TaxCodeRef": Ref,
@@ -175,7 +153,7 @@ class AccountBasedExpenseLineDetail(QuickbooksBaseObject):
     }
 
     def __init__(self):
-        super(AccountBasedExpenseLineDetail, self).__init__()
+        super().__init__()
         self.BillableStatus = None
         self.TaxAmount = 0
         self.TaxInclusiveAmt = 0
@@ -189,21 +167,18 @@ class AccountBasedExpenseLineDetail(QuickbooksBaseObject):
 
 
 class AccountBasedExpenseLine(DetailLine):
-    class_dict = {
-        "AccountBasedExpenseLineDetail": AccountBasedExpenseLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"AccountBasedExpenseLineDetail": AccountBasedExpenseLineDetail}
 
     def __init__(self):
-        super(AccountBasedExpenseLine, self).__init__()
+        super().__init__()
 
         self.DetailType = "AccountBasedExpenseLineDetail"
         self.AccountBasedExpenseLineDetail = None
 
 
-@python_2_unicode_compatible
 class TDSLineDetail(QuickbooksBaseObject):
     def __init__(self):
-        super(TDSLineDetail, self).__init__()
+        super().__init__()
         self.TDSSectionTypeId = None
 
     def __str__(self):
@@ -211,29 +186,27 @@ class TDSLineDetail(QuickbooksBaseObject):
 
 
 class TDSLine(DetailLine):
-    class_dict = {
-        "TDSLineDetail": TDSLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"TDSLineDetail": TDSLineDetail}
 
     def __init__(self):
-        super(TDSLine, self).__init__()
+        super().__init__()
 
         self.DetailType = "TDSLineDetail"
         self.TDSLineDetail = None
 
 
 class ItemBasedExpenseLineDetail(QuickbooksBaseObject):
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "ItemRef": Ref,
         "ClassRef": Ref,
         "PriceLevelRef": Ref,
         "TaxCodeRef": Ref,
         "CustomerRef": Ref,
-        "MarkupInfo": MarkupInfo
+        "MarkupInfo": MarkupInfo,
     }
 
     def __init__(self):
-        super(ItemBasedExpenseLineDetail, self).__init__()
+        super().__init__()
         self.BillableStatus = None
         self.UnitPrice = 0
         self.TaxInclusiveAmt = 0
@@ -247,12 +220,10 @@ class ItemBasedExpenseLineDetail(QuickbooksBaseObject):
 
 
 class ItemBasedExpenseLine(DetailLine):
-    class_dict = {
-        "ItemBasedExpenseLineDetail": ItemBasedExpenseLineDetail
-    }
+    class_dict: ClassVar[dict[str, type]] = {"ItemBasedExpenseLineDetail": ItemBasedExpenseLineDetail}
 
     def __init__(self):
-        super(ItemBasedExpenseLine, self).__init__()
+        super().__init__()
 
         self.DetailType = "ItemBasedExpenseLineDetail"
         self.ItemBasedExpenseLineDetail = None
