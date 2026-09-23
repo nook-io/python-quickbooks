@@ -1,8 +1,8 @@
-from six import python_2_unicode_compatible
-from .base import Ref, QuickbooksManagedObject, QuickbooksTransactionEntity
+from typing import ClassVar
+
+from quickbooks.objects.base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class Item(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: An item is a thing that your company buys, sells, or re-sells,
@@ -20,7 +20,7 @@ class Item(QuickbooksManagedObject, QuickbooksTransactionEntity):
     labor, consulting hours, and professional fees.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "AssetAccountRef": Ref,
         "ExpenseAccountRef": Ref,
         "IncomeAccountRef": Ref,
@@ -32,7 +32,7 @@ class Item(QuickbooksManagedObject, QuickbooksTransactionEntity):
     qbo_object_name = "Item"
 
     def __init__(self):
-        super(Item, self).__init__()
+        super().__init__()
         self.Name = ""
         self.Description = ""
         self.Active = True

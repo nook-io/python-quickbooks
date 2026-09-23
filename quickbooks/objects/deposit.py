@@ -1,31 +1,33 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksBaseObject, Ref, LinkedTxn, QuickbooksManagedObject, LinkedTxnMixin, \
-    QuickbooksTransactionEntity, CustomField, AttachableRef
-from ..mixins import DeleteMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import (
+    AttachableRef,
+    CustomField,
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksBaseObject,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
 
 
 class CashBackInfo(QuickbooksBaseObject):
-    class_dict = {
-        "AccountRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"AccountRef": Ref}
 
     def __init__(self):
-        super(CashBackInfo, self).__init__()
+        super().__init__()
         self.Amount = 0
         self.Memo = ""
         self.AccountRef = None
 
 
 class DepositLineDetail(QuickbooksBaseObject):
-    class_dict = {
-        "Entity": Ref,
-        "ClassRef": Ref,
-        "AccountRef": Ref,
-        "PaymentMethodRef": Ref,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"Entity": Ref, "ClassRef": Ref, "AccountRef": Ref, "PaymentMethodRef": Ref}
 
     def __init__(self):
-        super(DepositLineDetail, self).__init__()
+        super().__init__()
         self.CheckNum = ""
         self.TxnType = None
 
@@ -35,22 +37,15 @@ class DepositLineDetail(QuickbooksBaseObject):
         self.PaymentMethodRef = None
 
 
-@python_2_unicode_compatible
 class DepositLine(QuickbooksBaseObject):
-    class_dict = {
-        "DepositToAccountRef": Ref,
-        "DepositLineDetail": DepositLineDetail,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"DepositToAccountRef": Ref, "DepositLineDetail": DepositLineDetail}
 
-    list_dict = {
-        "LinkedTxn": LinkedTxn,
-        "CustomField": CustomField,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"LinkedTxn": LinkedTxn, "CustomField": CustomField}
 
     qbo_object_name = "Deposit"
 
     def __init__(self):
-        super(DepositLine, self).__init__()
+        super().__init__()
         self.Id = None
         self.LineNum = 0
         self.Description = ""
@@ -63,7 +58,6 @@ class DepositLine(QuickbooksBaseObject):
         return str(self.Amount)
 
 
-@python_2_unicode_compatible
 class Deposit(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: A deposit object is a transaction that records one or more deposits of the following types:
@@ -75,7 +69,7 @@ class Deposit(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity,
         -A new direct deposit specified by Deposit.Line.DepositLineDetail line detail.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "DepositToAccountRef": Ref,
         "DepartmentRef": Ref,
         "CurrencyRef": Ref,
@@ -83,18 +77,14 @@ class Deposit(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity,
         "CashBack": CashBackInfo,
     }
 
-    list_dict = {
-        "Line": DepositLine
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Line": DepositLine}
 
-    detail_dict = {
-        "DepositLineDetail": DepositLine
-    }
+    detail_dict: ClassVar[dict[str, type]] = {"DepositLineDetail": DepositLine}
 
     qbo_object_name = "Deposit"
 
     def __init__(self):
-        super(Deposit, self).__init__()
+        super().__init__()
         self.TotalAmt = 0
         self.HomeTotalAmt = 0
         self.TxnDate = ""

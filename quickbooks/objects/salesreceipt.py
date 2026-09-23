@@ -1,14 +1,23 @@
-from six import python_2_unicode_compatible
-from .base import Ref, CustomField, QuickbooksManagedObject, LinkedTxnMixin, Address, \
-    EmailAddress, QuickbooksTransactionEntity, LinkedTxn
-from .tax import TxnTaxDetail
-from .detailline import DetailLine
-from ..mixins import QuickbooksPdfDownloadable, DeleteMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin, QuickbooksPdfDownloadable
+from quickbooks.objects.base import (
+    Address,
+    CustomField,
+    EmailAddress,
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import DetailLine
+from quickbooks.objects.tax import TxnTaxDetail
 
 
-@python_2_unicode_compatible
-class SalesReceipt(DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObject,
-                   QuickbooksTransactionEntity, LinkedTxnMixin):
+class SalesReceipt(
+    DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin
+):
     """
     QBO definition: SalesReceipt represents the sales receipt that is given to a customer.
     A sales receipt is similar to an invoice. However, for a sales receipt, payment is received
@@ -16,7 +25,8 @@ class SalesReceipt(DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObje
     where the customer deposits the payment. If the deposit account is not specified, the
     payment type is classified as Undeposited Account.
     """
-    class_dict = {
+
+    class_dict: ClassVar[dict[str, type]] = {
         "DepartmentRef": Ref,
         "CurrencyRef": Ref,
         "TxnTaxDetail": TxnTaxDetail,
@@ -30,20 +40,14 @@ class SalesReceipt(DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObje
         "ShipMethodRef": Ref,
     }
 
-    list_dict = {
-        "CustomField": CustomField,
-        "Line": DetailLine,
-        "LinkedTxn": LinkedTxn
-    }
+    list_dict: ClassVar[dict[str, type]] = {"CustomField": CustomField, "Line": DetailLine, "LinkedTxn": LinkedTxn}
 
-    detail_dict = {
-
-    }
+    detail_dict: ClassVar[dict[str, type]] = {}
 
     qbo_object_name = "SalesReceipt"
 
     def __init__(self):
-        super(SalesReceipt, self).__init__()
+        super().__init__()
         self.DocNumber = ""
         self.TxnDate = ""
         self.PrivateNote = ""

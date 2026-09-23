@@ -1,8 +1,8 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref, CustomField, MetaData
+from typing import ClassVar
+
+from quickbooks.objects.base import CustomField, MetaData, QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class CompanyCurrency(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: Applicable only for those companies that enable multicurrency, a companycurrency object
@@ -11,15 +11,12 @@ class CompanyCurrency(QuickbooksManagedObject, QuickbooksTransactionEntity):
     displayed by the Currency Center in the QuickBooks Online UI
     """
 
-    class_dict = {
-        "CustomField": CustomField,
-        "MetaData": MetaData,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"CustomField": CustomField, "MetaData": MetaData}
 
     qbo_object_name = "CompanyCurrency"
 
     def __init__(self):
-        super(CompanyCurrency, self).__init__()
+        super().__init__()
 
         self.Id = None
         self.Code = ""

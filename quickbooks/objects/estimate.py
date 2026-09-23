@@ -1,24 +1,42 @@
-from six import python_2_unicode_compatible
-from .base import CustomField, Ref, CustomerMemo, Address, EmailAddress, QuickbooksManagedObject, \
-    LinkedTxnMixin, QuickbooksTransactionEntity, LinkedTxn
-from .tax import TxnTaxDetail
-from .detailline import DetailLine, SalesItemLine, GroupLine, DescriptionOnlyLine, DiscountLine, SubtotalLine
-from ..mixins import QuickbooksPdfDownloadable, DeleteMixin, SendMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin, QuickbooksPdfDownloadable, SendMixin
+from quickbooks.objects.base import (
+    Address,
+    CustomerMemo,
+    CustomField,
+    EmailAddress,
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import (
+    DescriptionOnlyLine,
+    DetailLine,
+    DiscountLine,
+    GroupLine,
+    SalesItemLine,
+    SubtotalLine,
+)
+from quickbooks.objects.tax import TxnTaxDetail
 
 
-@python_2_unicode_compatible
-class Estimate(DeleteMixin,
-               QuickbooksPdfDownloadable,
-               QuickbooksManagedObject,
-               QuickbooksTransactionEntity,
-               LinkedTxnMixin,
-               SendMixin):
+class Estimate(
+    DeleteMixin,
+    QuickbooksPdfDownloadable,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    LinkedTxnMixin,
+    SendMixin,
+):
     """
     QBO definition: The Estimate represents a proposal for a financial transaction from a business to a customer
     for goods or services proposed to be sold, including proposed pricing.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "BillAddr": Address,
         "ShipAddr": Address,
         "CustomerRef": Ref,
@@ -32,13 +50,9 @@ class Estimate(DeleteMixin,
         "ShipMethodRef": Ref,
     }
 
-    list_dict = {
-        "CustomField": CustomField,
-        "LinkedTxn": LinkedTxn,
-        "Line": DetailLine,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"CustomField": CustomField, "LinkedTxn": LinkedTxn, "Line": DetailLine}
 
-    detail_dict = {
+    detail_dict: ClassVar[dict[str, type]] = {
         "SalesItemLineDetail": SalesItemLine,
         "GroupLineDetail": GroupLine,
         "DescriptionOnly": DescriptionOnlyLine,
@@ -49,7 +63,7 @@ class Estimate(DeleteMixin,
     qbo_object_name = "Estimate"
 
     def __init__(self):
-        super(Estimate, self).__init__()
+        super().__init__()
         self.DocNumber = None
         self.TxnDate = None
         self.TxnStatus = None

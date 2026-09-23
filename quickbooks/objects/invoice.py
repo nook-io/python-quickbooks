@@ -1,27 +1,51 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksBaseObject, Ref, CustomField, Address, EmailAddress, CustomerMemo, QuickbooksManagedObject, \
-    QuickbooksTransactionEntity, LinkedTxn, LinkedTxnMixin
-from .tax import TxnTaxDetail
-from .detailline import DetailLine, SalesItemLine, SubtotalLine, DiscountLine, GroupLine, DescriptionOnlyLine
-from ..mixins import QuickbooksPdfDownloadable, DeleteMixin, SendMixin, VoidMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin, QuickbooksPdfDownloadable, SendMixin, VoidMixin
+from quickbooks.objects.base import (
+    Address,
+    CustomerMemo,
+    CustomField,
+    EmailAddress,
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksBaseObject,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import (
+    DescriptionOnlyLine,
+    DetailLine,
+    DiscountLine,
+    GroupLine,
+    SalesItemLine,
+    SubtotalLine,
+)
+from quickbooks.objects.tax import TxnTaxDetail
 
 
 class DeliveryInfo(QuickbooksBaseObject):
     def __init__(self):
-        super(DeliveryInfo, self).__init__()
+        super().__init__()
         self.DeliveryType = ""
         self.DeliveryTime = ""
 
 
-@python_2_unicode_compatible
-class Invoice(DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObject, QuickbooksTransactionEntity,
-              LinkedTxnMixin, SendMixin, VoidMixin):
+class Invoice(
+    DeleteMixin,
+    QuickbooksPdfDownloadable,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    LinkedTxnMixin,
+    SendMixin,
+    VoidMixin,
+):
     """
     QBO definition: An Invoice represents a sales form where the customer pays for a product or service later.
 
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "DepartmentRef": Ref,
         "CurrencyRef": Ref,
         "CustomerRef": Ref,
@@ -34,27 +58,23 @@ class Invoice(DeleteMixin, QuickbooksPdfDownloadable, QuickbooksManagedObject, Q
         "TxnTaxDetail": TxnTaxDetail,
         "BillEmail": EmailAddress,
         "CustomerMemo": CustomerMemo,
-        "DeliveryInfo": DeliveryInfo
+        "DeliveryInfo": DeliveryInfo,
     }
 
-    list_dict = {
-        "CustomField": CustomField,
-        "Line": DetailLine,
-        "LinkedTxn": LinkedTxn,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"CustomField": CustomField, "Line": DetailLine, "LinkedTxn": LinkedTxn}
 
-    detail_dict = {
+    detail_dict: ClassVar[dict[str, type]] = {
         "SalesItemLineDetail": SalesItemLine,
         "SubTotalLineDetail": SubtotalLine,
         "DiscountLineDetail": DiscountLine,
         "DescriptionOnly": DescriptionOnlyLine,
-        "GroupLineDetail": GroupLine
+        "GroupLineDetail": GroupLine,
     }
 
     qbo_object_name = "Invoice"
 
     def __init__(self):
-        super(Invoice, self).__init__()
+        super().__init__()
         self.Deposit = 0
         self.Balance = 0
         self.AllowIPNPayment = True

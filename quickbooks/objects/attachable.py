@@ -1,10 +1,10 @@
-from six import python_2_unicode_compatible
-from .base import Ref, QuickbooksManagedObject, QuickbooksTransactionEntity, AttachableRef
-from ..client import QuickBooks
-from ..mixins import DeleteMixin
+from typing import ClassVar
+
+from quickbooks.client import QuickBooks
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import AttachableRef, QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class Attachable(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: This page covers the Attachable, Upload, and Download resources used for attachment management. Attachments are supplemental information linked to a transaction or Item object. They can be files, notes, or a combination of both.
@@ -13,22 +13,18 @@ class Attachable(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEnti
     For information about attachments, see the Attachments Developer Guide.
     """
 
-    class_dict = {
-        "EntityRef": Ref,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"EntityRef": Ref}
 
-    list_dict = {
-        "AttachableRef": AttachableRef,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"AttachableRef": AttachableRef}
 
     qbo_object_name = "Attachable"
 
     def __init__(self):
-        super(Attachable, self).__init__()
+        super().__init__()
 
         self.AttachableRef = []
         self.FileName = None
-        self._FilePath = ''
+        self._FilePath = ""
         self._FileData = None
         self.Note = ""
         self.FileAccessUri = None
@@ -57,14 +53,18 @@ class Attachable(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEnti
             qb = QuickBooks()
 
         if self.Id and int(self.Id) > 0:
-            json_data = qb.update_object(self.qbo_object_name, self.to_json(), _file_path=self._FilePath, _file_data=self._FileData)
+            json_data = qb.update_object(
+                self.qbo_object_name, self.to_json(), _file_path=self._FilePath, _file_data=self._FileData
+            )
         else:
-            json_data = qb.create_object(self.qbo_object_name, self.to_json(), _file_path=self._FilePath, _file_data=self._FileData)
+            json_data = qb.create_object(
+                self.qbo_object_name, self.to_json(), _file_path=self._FilePath, _file_data=self._FileData
+            )
 
         if self.FileName:
-            obj = type(self).from_json(json_data['AttachableResponse'][0]['Attachable'])
+            obj = type(self).from_json(json_data["AttachableResponse"][0]["Attachable"])
         else:
-            obj = type(self).from_json(json_data['Attachable'])
+            obj = type(self).from_json(json_data["Attachable"])
 
         self.Id = obj.Id
 

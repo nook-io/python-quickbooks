@@ -1,14 +1,18 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
 
-from quickbooks.objects.detailline import DetailLine, AccountBasedExpenseLine, ItemBasedExpenseLine, \
-    TDSLine
-from .base import Ref, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin, \
-    LinkedTxn, Address
-from .tax import TxnTaxDetail
-from ..mixins import DeleteMixin
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import (
+    Address,
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import AccountBasedExpenseLine, DetailLine, ItemBasedExpenseLine, TDSLine
+from quickbooks.objects.tax import TxnTaxDetail
 
 
-@python_2_unicode_compatible
 class Purchase(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: This entity represents expenses, such as a purchase made from a vendor.
@@ -24,22 +28,20 @@ class Purchase(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity
     query endpoint: SELECT * from Purchase where PaymentType='Check' You must specify an AccountRef for all purchases.
     The TotalAmtattribute must add up to sum of Line.Amount attributes.
     """
-    class_dict = {
+
+    class_dict: ClassVar[dict[str, type]] = {
         "AccountRef": Ref,
         "EntityRef": Ref,
         "DepartmentRef": Ref,
         "CurrencyRef": Ref,
         "PaymentMethodRef": Ref,
         "RemitToAddr": Address,
-        "TxnTaxDetail": TxnTaxDetail
+        "TxnTaxDetail": TxnTaxDetail,
     }
 
-    list_dict = {
-        "Line": DetailLine,
-        "LinkedTxn": LinkedTxn,
-    }
+    list_dict: ClassVar[dict[str, type]] = {"Line": DetailLine, "LinkedTxn": LinkedTxn}
 
-    detail_dict = {
+    detail_dict: ClassVar[dict[str, type]] = {
         "AccountBasedExpenseLineDetail": AccountBasedExpenseLine,
         "ItemBasedExpenseLineDetail": ItemBasedExpenseLine,
         "TDSLineDetail": TDSLine,
@@ -48,7 +50,7 @@ class Purchase(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity
     qbo_object_name = "Purchase"
 
     def __init__(self):
-        super(Purchase, self).__init__()
+        super().__init__()
         self.DocNumber = ""
         self.TxnDate = ""
         self.ExchangeRate = 1

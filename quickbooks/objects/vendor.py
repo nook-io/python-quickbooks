@@ -1,27 +1,33 @@
-from six import python_2_unicode_compatible
-from .base import Address, PhoneNumber, EmailAddress, WebAddress, Ref, QuickbooksBaseObject, \
-    QuickbooksManagedObject, QuickbooksTransactionEntity
+from typing import ClassVar
+
+from quickbooks.objects.base import (
+    Address,
+    EmailAddress,
+    PhoneNumber,
+    QuickbooksBaseObject,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+    WebAddress,
+)
 
 
 class ContactInfo(QuickbooksBaseObject):
-    class_dict = {
-        "Telephone": PhoneNumber
-    }
+    class_dict: ClassVar[dict[str, type]] = {"Telephone": PhoneNumber}
 
     def __init__(self):
-        super(ContactInfo, self).__init__()
+        super().__init__()
 
         self.Type = ""
         self.Telephone = None
 
 
-@python_2_unicode_compatible
 class Vendor(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: The Vendor represents the seller from whom your company purchases any service or product.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "BillAddr": Address,
         "TermRef": Ref,
         "PrimaryPhone": PhoneNumber,
@@ -31,13 +37,13 @@ class Vendor(QuickbooksManagedObject, QuickbooksTransactionEntity):
         "PrimaryEmailAddr": EmailAddress,
         "WebAddr": WebAddress,
         "CurrencyRef": Ref,
-        "APAccountRef": Ref
+        "APAccountRef": Ref,
     }
 
     qbo_object_name = "Vendor"
 
     def __init__(self):
-        super(Vendor, self).__init__()
+        super().__init__()
         self.Title = ""
         self.GivenName = ""
         self.MiddleName = ""

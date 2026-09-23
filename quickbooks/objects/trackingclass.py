@@ -1,8 +1,8 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
+from typing import ClassVar
+
+from quickbooks.objects.base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class Class(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: Classes provide a way to track different segments of the business so they're
@@ -12,14 +12,12 @@ class Class(QuickbooksManagedObject, QuickbooksTransactionEntity):
     entire transaction.
     """
 
-    class_dict = {
-        "ParentRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"ParentRef": Ref}
 
     qbo_object_name = "Class"
 
     def __init__(self):
-        super(Class, self).__init__()
+        super().__init__()
         self.Name = ""
         self.SubClass = False
         self.FullyQualifiedName = ""

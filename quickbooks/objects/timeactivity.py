@@ -1,27 +1,34 @@
-from six import python_2_unicode_compatible
-from .base import Ref, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin, AttachableRef
-from ..mixins import DeleteMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import (
+    AttachableRef,
+    LinkedTxnMixin,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
 
 
-@python_2_unicode_compatible
 class TimeActivity(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: The TimeActivity entity represents a record of time worked by a vendor or employee.
     """
-    class_dict = {
+
+    class_dict: ClassVar[dict[str, type]] = {
         "VendorRef": Ref,
         "CustomerRef": Ref,
         "DepartmentRef": Ref,
         "EmployeeRef": Ref,
         "ItemRef": Ref,
         "ClassRef": Ref,
-        "AttachableRef": AttachableRef
+        "AttachableRef": AttachableRef,
     }
 
     qbo_object_name = "TimeActivity"
 
     def __init__(self):
-        super(TimeActivity, self).__init__()
+        super().__init__()
         self.NameOf = ""  # required
         self.TxnDate = None
         self.BillableStatus = None

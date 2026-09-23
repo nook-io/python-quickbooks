@@ -1,16 +1,14 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
 
-from quickbooks.mixins import ListMixin, UpdateNoIdMixin, FromJsonMixin
-from .base import CustomField, QuickbooksBaseObject
+from quickbooks.mixins import FromJsonMixin, ListMixin, UpdateNoIdMixin
+from quickbooks.objects.base import CustomField, QuickbooksBaseObject
 
 
-@python_2_unicode_compatible
 class ExchangeRateMetaData(FromJsonMixin):
     def __init__(self):
         self.LastUpdatedTime = ""
 
 
-@python_2_unicode_compatible
 class ExchangeRate(QuickbooksBaseObject, ListMixin, UpdateNoIdMixin):
     """
     QBO definition: Applicable only for those companies that enable multicurrency,
@@ -19,10 +17,7 @@ class ExchangeRate(QuickbooksBaseObject, ListMixin, UpdateNoIdMixin):
     and the Currency Center in the QuickBooks Online UI to manage exchange rates for the company.
     """
 
-    class_dict = {
-        "MetaData": ExchangeRateMetaData,
-        "CustomField": CustomField,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"MetaData": ExchangeRateMetaData, "CustomField": CustomField}
 
     qbo_object_name = "ExchangeRate"
 
@@ -30,7 +25,7 @@ class ExchangeRate(QuickbooksBaseObject, ListMixin, UpdateNoIdMixin):
         return self.SourceCurrencyCode
 
     def __init__(self):
-        super(ExchangeRate, self).__init__()
+        super().__init__()
 
         self.AsOfDate = ""
         self.SourceCurrencyCode = ""

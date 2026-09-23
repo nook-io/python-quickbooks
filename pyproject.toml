@@ -4,35 +4,30 @@ build-backend = "uv_build"
 
 [project]
 name = "python-quickbooks"
-version = "0.9.2"
+version = "0.9.3"
 description = "A Python library for accessing the QuickBooks API."
 readme = "README.md"
-license = { text = "MIT" }
-requires-python = ">=3.8"
+license = "MIT"
+requires-python = ">=3.14"
 authors = [{ name = "Edward Emanuel Jr.", email = "edward.emanuel@gmail.com" }]
 keywords = ["quickbooks", "qbo", "accounting"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "intuit-oauth==1.2.4",
-    "rauth>=0.7.3",
-    "requests>=2.26.0",
-    "simplejson>=3.17.0",
-    "six>=1.14.0",
-    "python-dateutil",
-    "pycparser==2.18",
+  "intuit-oauth==1.2.4",
+  "requests>=2.26.0",
+  "simplejson>=3.17.0",
+  "python-dateutil",
+  "pycparser==2.18",
+  "requests-oauthlib>=2",
 ]
 
 [project.urls]
@@ -41,16 +36,58 @@ Homepage = "https://github.com/ej2/python-quickbooks"
 [project.scripts]
 quickbooks-cli = "quickbooks.tools.cli:cli_execute"
 
-[dependency-groups]
-dev = ["flake8", "flake8-pyproject"]
-
 [tool.uv.build-backend]
 module-name = "quickbooks"
 module-root = ""
 
-[tool.flake8]
-max-line-length = 100
-max-complexity = 10
-filename = "*.py"
-format = "default"
-exclude = "quickbooks/objects/__init__.py"
+[dependency-groups]
+dev = ["ruff==0.16.8"]
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+exclude = ["app/schema/xero/"]
+
+[tool.ruff.lint]
+ignore = [
+  # ASYNC109 disallows timeout parameters. We commonly use them for
+  # asyncio.wait_for or to send into HTTP libraries. Not a problem.
+  "ASYNC109",
+  # E501 and W191 can conflict with black formatting.
+  "E501",
+  "W191",
+  "TRY002", # Do not require use of custom exceptions
+  "TRY003", # Do not require error messages to be a variable
+  "TRY301", # Allow raising exceptions in try blocks
+]
+select = [
+  "ASYNC",
+  "B",
+  "C4",
+  "DTZ",
+  "E",
+  "F",
+  "FAST",
+  "FURB",
+  "I001",
+  "INP",
+  "PIE",
+  "RET",
+  "RUF",
+  "TID",
+  "TRY",
+  "UP",
+  "W",
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 20
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.format]
+quote-style = "double"
+skip-magic-trailing-comma = true

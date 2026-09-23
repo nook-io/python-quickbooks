@@ -1,8 +1,8 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
+from typing import ClassVar
+
+from quickbooks.objects.base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class Department(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: The Department entity provides a way to track different segments of the business, divisions, or
@@ -13,14 +13,12 @@ class Department(QuickbooksManagedObject, QuickbooksTransactionEntity):
     for display purposes. References to inactive objects are left intact.
     """
 
-    class_dict = {
-        "ParentRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"ParentRef": Ref}
 
     qbo_object_name = "Department"
 
     def __init__(self):
-        super(Department, self).__init__()
+        super().__init__()
         self.Name = ""
         self.SubDepartment = False
         self.FullyQualifiedName = ""

@@ -1,9 +1,8 @@
-from six import python_2_unicode_compatible
-from .base import Address, PhoneNumber, EmailAddress, WebAddress, \
-    QuickbooksReadOnlyObject, Ref
+from typing import ClassVar
+
+from quickbooks.objects.base import Address, EmailAddress, PhoneNumber, QuickbooksReadOnlyObject, Ref, WebAddress
 
 
-@python_2_unicode_compatible
 class CompanyInfo(QuickbooksReadOnlyObject):
     """
     QBO definition: The CompanyInfo entity contains basic company information.
@@ -15,19 +14,19 @@ class CompanyInfo(QuickbooksReadOnlyObject):
     entities.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "CompanyAddr": Address,
         "CustomerCommunicationAddr": Address,
         "LegalAddr": Address,
         "PrimaryPhone": PhoneNumber,
         "Email": EmailAddress,
-        "WebAddr": WebAddress
+        "WebAddr": WebAddress,
     }
 
     qbo_object_name = "CompanyInfo"
 
     def __init__(self):
-        super(CompanyInfo, self).__init__()
+        super().__init__()
 
         self.Id = None
         self.CompanyName = ""

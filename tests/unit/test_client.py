@@ -1,19 +1,15 @@
+import http.client
+from unittest.mock import patch
+
+from quickbooks import client
+from quickbooks.exceptions import AuthorizationException, QuickbooksException, SevereException
+from quickbooks.objects.salesreceipt import SalesReceipt
 from tests.integration.test_base import QuickbooksUnitTestCase
 
-try:
-    from mock import patch
-except ImportError:
-    from unittest.mock import patch
-
-from quickbooks.exceptions import QuickbooksException, SevereException, AuthorizationException
-from quickbooks import client
-from quickbooks.objects.salesreceipt import SalesReceipt
-
-
-TEST_SIGNATURE = 'nfPLN16u3vMvv08ghDs+dOkLuirEVDy5wAeG/lmM2OA='
+TEST_SIGNATURE = "nfPLN16u3vMvv08ghDs+dOkLuirEVDy5wAeG/lmM2OA="
 TEST_PAYLOAD = '{"stuff":"5"}'
-TEST_VERIFIER_TOKEN = 'verify_me'
-TEST_REFRESH_TOKEN = 'refresh'
+TEST_VERIFIER_TOKEN = "verify_me"
+TEST_REFRESH_TOKEN = "refresh"
 
 
 class ClientTest(QuickbooksUnitTestCase):
@@ -24,31 +20,22 @@ class ClientTest(QuickbooksUnitTestCase):
 
     def test_client_new(self):
         self.qb_client = client.QuickBooks(
-            company_id="company_id",
-            verbose=True,
-            minorversion=4,
-            verifier_token=TEST_VERIFIER_TOKEN,
+            company_id="company_id", verbose=True, minorversion=4, verifier_token=TEST_VERIFIER_TOKEN
         )
 
-        self.assertEquals(self.qb_client.company_id, "company_id")
-        self.assertEquals(self.qb_client.minorversion, 4)
+        self.assertEqual(self.qb_client.company_id, "company_id")
+        self.assertEqual(self.qb_client.minorversion, 4)
 
     def test_client_updated(self):
-        self.qb_client = client.QuickBooks(
-            sandbox=False,
-            company_id="company_id",
-        )
+        self.qb_client = client.QuickBooks(sandbox=False, company_id="company_id")
 
-        self.qb_client2 = client.QuickBooks(
-            sandbox=True,
-            company_id="update_company_id",
-        )
+        self.qb_client2 = client.QuickBooks(sandbox=True, company_id="update_company_id")
 
-        self.assertEquals(self.qb_client.sandbox, True)
-        self.assertEquals(self.qb_client.company_id, "update_company_id")
+        self.assertEqual(self.qb_client.sandbox, True)
+        self.assertEqual(self.qb_client.company_id, "update_company_id")
 
-        self.assertEquals(self.qb_client2.sandbox, True)
-        self.assertEquals(self.qb_client2.company_id, "update_company_id")
+        self.assertEqual(self.qb_client2.sandbox, True)
+        self.assertEqual(self.qb_client2.company_id, "update_company_id")
 
     def test_disable_global(self):
         client.QuickBooks.disable_global()
@@ -74,59 +61,59 @@ class ClientTest(QuickbooksUnitTestCase):
         qb_client = client.QuickBooks()
         result = qb_client.isvalid_object_name("Customer")
 
-        self.assertEquals(result, True)
+        self.assertEqual(result, True)
 
     def test_isvalid_object_name_invalid(self):
         qb_client = client.QuickBooks()
 
         self.assertRaises(Exception, qb_client.isvalid_object_name, "invalid")
 
-    @patch('quickbooks.client.QuickBooks.make_request')
+    @patch("quickbooks.client.QuickBooks.make_request")
     def test_batch_operation(self, make_req):
         qb_client = client.QuickBooks()
         qb_client.batch_operation("request_body")
 
         self.assertTrue(make_req.called)
 
-    @patch('quickbooks.client.QuickBooks.post')
+    @patch("quickbooks.client.QuickBooks.post")
     def test_misc_operation(self, post):
         qb_client = client.QuickBooks()
         qb_client.misc_operation("end_point", "request_body")
 
         url = "https://sandbox-quickbooks.api.intuit.com/v3/company/COMPANY_ID/end_point"
-        post.assert_called_with(url, "request_body", 'application/json')
+        post.assert_called_with(url, "request_body", "application/json")
 
-    @patch('quickbooks.client.QuickBooks.post')
+    @patch("quickbooks.client.QuickBooks.post")
     def test_create_object(self, post):
         qb_client = client.QuickBooks()
         qb_client.create_object("Customer", "request_body")
 
         self.assertTrue(post.called)
 
-    @patch('quickbooks.client.QuickBooks.post')
+    @patch("quickbooks.client.QuickBooks.post")
     def test_query(self, post):
         qb_client = client.QuickBooks()
         qb_client.query("select")
 
         self.assertTrue(post.called)
 
-    @patch('quickbooks.client.QuickBooks.post')
+    @patch("quickbooks.client.QuickBooks.post")
     def test_update_object(self, post):
         qb_client = client.QuickBooks()
         qb_client.update_object("Customer", "request_body")
 
         self.assertTrue(post.called)
 
-    @patch('quickbooks.client.QuickBooks.make_request')
+    @patch("quickbooks.client.QuickBooks.make_request")
     def test_update_object_with_request_id(self, make_req):
         qb_client = client.QuickBooks()
         qb_client.company_id = "1234"
         qb_client.update_object("Customer", "request_body", request_id="123")
 
         url = "https://sandbox-quickbooks.api.intuit.com/v3/company/1234/customer"
-        make_req.assert_called_with("POST", url, "request_body", file_path = None, request_id="123")
+        make_req.assert_called_with("POST", url, "request_body", file_path=None, request_id="123")
 
-    @patch('quickbooks.client.QuickBooks.get')
+    @patch("quickbooks.client.QuickBooks.get")
     def test_get_current_user(self, get):
         qb_client = client.QuickBooks()
         qb_client.company_id = "1234"
@@ -135,7 +122,7 @@ class ClientTest(QuickbooksUnitTestCase):
         url = "https://appcenter.intuit.com/api/v1/user/current"
         get.assert_called_with(url)
 
-    @patch('quickbooks.client.QuickBooks.make_request')
+    @patch("quickbooks.client.QuickBooks.make_request")
     def test_get_report(self, make_req):
         qb_client = client.QuickBooks()
         qb_client.company_id = "1234"
@@ -148,9 +135,9 @@ class ClientTest(QuickbooksUnitTestCase):
         qb_client = client.QuickBooks()
 
         instance = qb_client.get_instance()
-        self.assertEquals(qb_client, instance)
+        self.assertEqual(qb_client, instance)
 
-    @patch('quickbooks.client.QuickBooks.make_request')
+    @patch("quickbooks.client.QuickBooks.make_request")
     def test_get_single_object(self, make_req):
         qb_client = client.QuickBooks()
         qb_client.company_id = "1234"
@@ -159,29 +146,32 @@ class ClientTest(QuickbooksUnitTestCase):
         url = "https://sandbox-quickbooks.api.intuit.com/v3/company/1234/test/1/"
         make_req.assert_called_with("GET", url, {})
 
-    @patch('quickbooks.client.QuickBooks.process_request')
+    @patch("quickbooks.client.QuickBooks.process_request")
     def test_make_request(self, process_request):
         process_request.return_value = MockResponse()
 
         qb_client = client.QuickBooks()
         qb_client.company_id = "1234"
         url = "https://sandbox-quickbooks.api.intuit.com/v3/company/1234/test/1/"
-        qb_client.make_request("GET", url, request_body=None, content_type='application/json')
+        qb_client.make_request("GET", url, request_body=None, content_type="application/json")
 
         process_request.assert_called_with(
-                "GET", url, data={},
-                headers={'Content-Type': 'application/json', 'Accept': 'application/json', 'User-Agent': 'python-quickbooks V3 library'}, params={})
-
+            "GET",
+            url,
+            data={},
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "User-Agent": "python-quickbooks V3 library",
+            },
+            params={},
+        )
 
     def test_handle_exceptions(self):
         qb_client = client.QuickBooks()
         error_data = {
-            "Error": [{
-                "Message": "message",
-                "Detail": "detail",
-                "code": "2030",
-                "element": "Id"}],
-            "type": "ValidationFault"
+            "Error": [{"Message": "message", "Detail": "detail", "code": "2030", "element": "Id"}],
+            "type": "ValidationFault",
         }
 
         self.assertRaises(QuickbooksException, qb_client.handle_exceptions, error_data)
@@ -189,17 +179,13 @@ class ClientTest(QuickbooksUnitTestCase):
     def test_handle_exceptions_severe(self):
         qb_client = client.QuickBooks()
         error_data = {
-            "Error": [{
-                "Message": "message",
-                "Detail": "detail",
-                "code": "10001",
-                "element": "Id"}],
-            "type": "ValidationFault"
+            "Error": [{"Message": "message", "Detail": "detail", "code": "10001", "element": "Id"}],
+            "type": "ValidationFault",
         }
 
         self.assertRaises(SevereException, qb_client.handle_exceptions, error_data)
 
-    @patch('quickbooks.client.QuickBooks.process_request')
+    @patch("quickbooks.client.QuickBooks.process_request")
     def test_download_pdf(self, process_request):
         self.qb_client.session = MockSession()
         receipt = SalesReceipt()
@@ -211,9 +197,16 @@ class ClientTest(QuickbooksUnitTestCase):
 
         url = "https://sandbox-quickbooks.api.intuit.com/v3/company/COMPANY_ID/salesreceipt/1/pdf"
         process_request.assert_called_with(
-            "GET", url, headers={'Content-Type': 'application/pdf', 'Accept': 'application/pdf, application/json', 'User-Agent': 'python-quickbooks V3 library'})
+            "GET",
+            url,
+            headers={
+                "Content-Type": "application/pdf",
+                "Accept": "application/pdf, application/json",
+                "User-Agent": "python-quickbooks V3 library",
+            },
+        )
 
-        self.assertEqual(response, 'sample pdf content')
+        self.assertEqual(response, "sample pdf content")
 
     def test_download_nonexistent_pdf(self):
         receipt = SalesReceipt()
@@ -228,7 +221,7 @@ class ClientTest(QuickbooksUnitTestCase):
         self.qb_client.verifier_token = TEST_VERIFIER_TOKEN
         self.assertFalse(self.qb_client.validate_webhook_signature("", TEST_SIGNATURE, TEST_VERIFIER_TOKEN))
 
-    @patch('quickbooks.client.QuickBooks.process_request')
+    @patch("quickbooks.client.QuickBooks.process_request")
     def test_download_pdf_not_authorized(self, process_request):
         self.qb_client.session = MockSession()
         receipt = SalesReceipt()
@@ -239,59 +232,53 @@ class ClientTest(QuickbooksUnitTestCase):
         self.assertRaises(AuthorizationException, receipt.download_pdf, self.qb_client)
 
 
-class MockResponse(object):
+class MockResponse:
     @property
     def text(self):
         return "oauth_token_secret=secretvalue&oauth_callback_confirmed=true&oauth_token=tokenvalue"
 
     @property
     def status_code(self):
-        try:
-            import httplib  # python 2
-        except ImportError:
-            import http.client as httplib  # python 3
-        return httplib.OK
+        import http.client
+
+        return http.client.OK
 
     def json(self):
         return "{}"
 
     def content(self):
-        return ''
+        return ""
 
 
-class MockUnauthorizedResponse(object):
+class MockUnauthorizedResponse:
     @property
     def text(self):
         return "UNAUTHORIZED"
 
     @property
     def status_code(self):
-        try:
-            import httplib  # python 2
-        except ImportError:
-            import http.client as httplib  # python 3
-        return httplib.UNAUTHORIZED
+        import http.client
+
+        return http.client.UNAUTHORIZED
 
 
-class MockPdfResponse(object):
+class MockPdfResponse:
     @property
     def status_code(self):
-        try:
-            import httplib  # python 2
-        except ImportError:
-            import http.client as httplib  # python 3
-        return httplib.OK
+        import http.client
+
+        return http.client.OK
 
     @property
     def content(self):
         return "sample pdf content"
 
 
-class MockSessionManager(object):
+class MockSessionManager:
     def get_session(self):
         return MockSession()
 
 
-class MockSession(object):
+class MockSession:
     def request(self, request_type, url, no_idea, company_id, **kwargs):
         return MockResponse()

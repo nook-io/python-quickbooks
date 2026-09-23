@@ -1,19 +1,28 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
 
+from quickbooks.mixins import DeleteMixin
 from quickbooks.objects import CreditCardPayment
-from .base import Ref, CustomField, QuickbooksManagedObject, \
-    LinkedTxnMixin, QuickbooksTransactionEntity, LinkedTxn, Address, EmailAddress, QuickbooksBaseObject, CustomerMemo
-from .tax import TxnTaxDetail
-from .detailline import DetailLine
-from ..mixins import DeleteMixin
+from quickbooks.objects.base import (
+    Address,
+    CustomerMemo,
+    CustomField,
+    EmailAddress,
+    LinkedTxn,
+    LinkedTxnMixin,
+    QuickbooksBaseObject,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import DetailLine
+from quickbooks.objects.tax import TxnTaxDetail
 
 
-@python_2_unicode_compatible
 class RefundReceiptCheckPayment(QuickbooksBaseObject):
     qbo_object_name = "CheckPayment"
 
     def __init__(self):
-        super(RefundReceiptCheckPayment, self).__init__()
+        super().__init__()
         self.CheckNum = ""
         self.Status = ""
         self.NameOnAcct = ""
@@ -24,19 +33,19 @@ class RefundReceiptCheckPayment(QuickbooksBaseObject):
         return self.CheckNum
 
 
-@python_2_unicode_compatible
 class RefundReceipt(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: RefundReceipt represents a refund to the customer for a product or service that was given.
     """
-    class_dict = {
+
+    class_dict: ClassVar[dict[str, type]] = {
         "DepartmentRef": Ref,
         "CurrencyRef": Ref,
         "TxnTaxDetail": TxnTaxDetail,
         "DepositToAccountRef": Ref,
         "CustomerRef": Ref,
-        "BillAddr":  Address,
-        "ShipAddr":  Address,
+        "BillAddr": Address,
+        "ShipAddr": Address,
         "ClassRef": Ref,
         "BillEmail": EmailAddress,
         "PaymentMethodRef": Ref,
@@ -45,20 +54,14 @@ class RefundReceipt(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionE
         "CustomerMemo": CustomerMemo,
     }
 
-    list_dict = {
-        "CustomField": CustomField,
-        "Line": DetailLine,
-        "LinkedTxn": LinkedTxn
-    }
+    list_dict: ClassVar[dict[str, type]] = {"CustomField": CustomField, "Line": DetailLine, "LinkedTxn": LinkedTxn}
 
-    detail_dict = {
-
-    }
+    detail_dict: ClassVar[dict[str, type]] = {}
 
     qbo_object_name = "RefundReceipt"
 
     def __init__(self):
-        super(RefundReceipt, self).__init__()
+        super().__init__()
         self.DocNumber = ""
         self.TotalAmt = 0
         self.ApplyTaxAfterDiscount = False

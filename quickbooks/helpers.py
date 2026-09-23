@@ -1,4 +1,3 @@
-
 def qb_date_format(input_date):
     """
     Converts date to quickbooks date format
@@ -24,4 +23,4 @@ def qb_datetime_utc_offset_format(input_date, utc_offset):
     :param utc_offset: Formatted +/-HH:MM example: -08:00
     :return:
     """
-    return "{0}{1}".format(qb_datetime_format(input_date), utc_offset)
+    return f"{qb_datetime_format(input_date)}{utc_offset}"

@@ -1,20 +1,27 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
 
-from quickbooks.objects.detailline import SalesItemLine, SubtotalLine, DiscountLine, DescriptionOnlyLine, DetailLine
-from .base import Address, EmailAddress, Ref, CustomField, CustomerMemo, QuickbooksManagedObject, \
-    LinkedTxnMixin, QuickbooksTransactionEntity
-from .tax import TxnTaxDetail
-from ..mixins import DeleteMixin
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import (
+    Address,
+    CustomerMemo,
+    CustomField,
+    EmailAddress,
+    LinkedTxnMixin,
+    QuickbooksManagedObject,
+    QuickbooksTransactionEntity,
+    Ref,
+)
+from quickbooks.objects.detailline import DescriptionOnlyLine, DetailLine, DiscountLine, SalesItemLine, SubtotalLine
+from quickbooks.objects.tax import TxnTaxDetail
 
 
-@python_2_unicode_compatible
 class CreditMemo(DeleteMixin, QuickbooksTransactionEntity, QuickbooksManagedObject, LinkedTxnMixin):
     """
     QBO definition: The CreditMemo is a financial transaction representing a refund or credit of payment or part
     of a payment for goods or services that have been sold.
     """
 
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "BillAddr": Address,
         "ShipAddr": Address,
         "DepartmentRef": Ref,
@@ -29,22 +36,19 @@ class CreditMemo(DeleteMixin, QuickbooksTransactionEntity, QuickbooksManagedObje
         "DepositToAccountRef": Ref,
     }
 
-    list_dict = {
-        "CustomField": CustomField,
-        "Line": DetailLine
-    }
+    list_dict: ClassVar[dict[str, type]] = {"CustomField": CustomField, "Line": DetailLine}
 
-    detail_dict = {
+    detail_dict: ClassVar[dict[str, type]] = {
         "SalesItemLineDetail": SalesItemLine,
         "SubTotalLineDetail": SubtotalLine,
         "DiscountLineDetail": DiscountLine,
-        "DescriptionLineDetail": DescriptionOnlyLine
+        "DescriptionLineDetail": DescriptionOnlyLine,
     }
 
     qbo_object_name = "CreditMemo"
 
     def __init__(self):
-        super(CreditMemo, self).__init__()
+        super().__init__()
         self.RemainingCredit = 0
         self.ExchangeRate = 0
         self.DocNumber = ""

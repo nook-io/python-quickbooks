@@ -1,8 +1,8 @@
-from six import python_2_unicode_compatible
-from .base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
+from typing import ClassVar
+
+from quickbooks.objects.base import QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class PaymentMethod(QuickbooksManagedObject, QuickbooksTransactionEntity):
     """
     QBO definition: The PaymentMethod entity provides the method of payment for received goods. Delete is achieved by setting the
@@ -11,12 +11,12 @@ class PaymentMethod(QuickbooksManagedObject, QuickbooksTransactionEntity):
     left intact.
     """
 
-    class_dict = {}
+    class_dict: ClassVar[dict[str, type]] = {}
 
     qbo_object_name = "PaymentMethod"
 
     def __init__(self):
-        super(PaymentMethod, self).__init__()
+        super().__init__()
         self.Name = ""
         self.Type = ""
         self.Active = True
@@ -31,4 +31,3 @@ class PaymentMethod(QuickbooksManagedObject, QuickbooksTransactionEntity):
         ref.value = self.Id
 
         return ref
-

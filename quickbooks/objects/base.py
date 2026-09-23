@@ -1,11 +1,12 @@
-from six import python_2_unicode_compatible
-from ..mixins import ToDictMixin, ToJsonMixin, FromJsonMixin, ListMixin, ReadMixin, UpdateMixin
+from typing import ClassVar
+
+from quickbooks.mixins import FromJsonMixin, ListMixin, ReadMixin, ToDictMixin, ToJsonMixin, UpdateMixin
 
 
 class QuickbooksBaseObject(ToJsonMixin, FromJsonMixin, ToDictMixin):
-    class_dict = {}
-    list_dict = {}
-    detail_dict = {}
+    class_dict: ClassVar[dict[str, type]] = {}
+    list_dict: ClassVar[dict[str, type]] = {}
+    detail_dict: ClassVar[dict[str, type]] = {}
 
 
 class QuickbooksTransactionEntity(QuickbooksBaseObject):
@@ -24,17 +25,16 @@ class QuickbooksReadOnlyObject(QuickbooksBaseObject, ReadMixin, ListMixin):
     pass
 
 
-@python_2_unicode_compatible
 class MetaData(FromJsonMixin):
     def __init__(self):
         self.CreateTime = ""
         self.LastUpdatedTime = ""
 
     def __str__(self):
-        return "Created {0}".format(self.CreateTime)
+        return f"Created {self.CreateTime}"
 
 
-class LinkedTxnMixin(object):
+class LinkedTxnMixin:
     def to_linked_txn(self):
         linked_txn = LinkedTxn()
         linked_txn.TxnId = self.Id
@@ -44,7 +44,6 @@ class LinkedTxnMixin(object):
         return linked_txn
 
 
-@python_2_unicode_compatible
 class Address(QuickbooksBaseObject):
     def __init__(self):
         self.Id = None
@@ -62,10 +61,9 @@ class Address(QuickbooksBaseObject):
         self.Note = ""
 
     def __str__(self):
-        return "{0} {1}, {2} {3}".format(self.Line1, self.City, self.CountrySubDivisionCode, self.PostalCode)
+        return f"{self.Line1} {self.City}, {self.CountrySubDivisionCode} {self.PostalCode}"
 
 
-@python_2_unicode_compatible
 class PhoneNumber(ToJsonMixin, FromJsonMixin, ToDictMixin):
     def __init__(self):
         self.FreeFormNumber = ""
@@ -74,7 +72,6 @@ class PhoneNumber(ToJsonMixin, FromJsonMixin, ToDictMixin):
         return self.FreeFormNumber
 
 
-@python_2_unicode_compatible
 class EmailAddress(QuickbooksBaseObject):
     def __init__(self):
         self.Address = ""
@@ -83,7 +80,6 @@ class EmailAddress(QuickbooksBaseObject):
         return self.Address
 
 
-@python_2_unicode_compatible
 class WebAddress(QuickbooksBaseObject):
     def __init__(self):
         self.URI = ""
@@ -92,7 +88,6 @@ class WebAddress(QuickbooksBaseObject):
         return self.URI
 
 
-@python_2_unicode_compatible
 class Ref(QuickbooksBaseObject):
     def __init__(self):
         self.value = ""
@@ -103,7 +98,6 @@ class Ref(QuickbooksBaseObject):
         return self.name
 
 
-@python_2_unicode_compatible
 class CustomField(QuickbooksBaseObject):
     def __init__(self):
         self.DefinitionId = ""
@@ -115,12 +109,11 @@ class CustomField(QuickbooksBaseObject):
         return self.Name
 
 
-@python_2_unicode_compatible
 class LinkedTxn(QuickbooksBaseObject):
     qbo_object_name = "LinkedTxn"
 
     def __init__(self):
-        super(LinkedTxn, self).__init__()
+        super().__init__()
         self.TxnId = 0
         self.TxnType = 0
         self.TxnLineId = 0
@@ -129,10 +122,9 @@ class LinkedTxn(QuickbooksBaseObject):
         return str(self.TxnId)
 
 
-@python_2_unicode_compatible
 class CustomerMemo(QuickbooksBaseObject):
     def __init__(self):
-        super(CustomerMemo, self).__init__()
+        super().__init__()
         self.value = ""
 
     def __str__(self):
@@ -140,12 +132,10 @@ class CustomerMemo(QuickbooksBaseObject):
 
 
 class MarkupInfo(QuickbooksBaseObject):
-    class_dict = {
-        "PriceLevelRef": Ref,
-    }
+    class_dict: ClassVar[dict[str, type]] = {"PriceLevelRef": Ref}
 
     def __init__(self):
-        super(MarkupInfo, self).__init__()
+        super().__init__()
         self.PercentBased = False
         self.Value = 0
         self.Percent = 0
@@ -153,18 +143,14 @@ class MarkupInfo(QuickbooksBaseObject):
 
 
 class AttachableRef(QuickbooksBaseObject):
-    class_dict = {
-        "EntityRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"EntityRef": Ref}
 
-    list_dict = {
-        "CustomField": CustomField
-    }
+    list_dict: ClassVar[dict[str, type]] = {"CustomField": CustomField}
 
     qbo_object_name = "AttachableRef"
 
     def __init__(self):
-        super(AttachableRef, self).__init__()
+        super().__init__()
 
         self.LineInfo = None
         self.IncludeOnSend = False

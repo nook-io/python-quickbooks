@@ -1,10 +1,9 @@
-from six import python_2_unicode_compatible
+from typing import ClassVar
 
 from quickbooks.mixins import PrefMixin, UpdateNoIdMixin
-from .base import QuickbooksBaseObject, QuickbooksTransactionEntity, Ref
+from quickbooks.objects.base import QuickbooksBaseObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class PreferencesCustomField(QuickbooksBaseObject):
     def __init__(self):
         self.Type = ""
@@ -17,9 +16,7 @@ class PreferencesCustomField(QuickbooksBaseObject):
 
 
 class PreferencesCustomFieldGroup(QuickbooksBaseObject):
-    list_dict = {
-        "CustomField": PreferencesCustomField
-    }
+    list_dict: ClassVar[dict[str, type]] = {"CustomField": PreferencesCustomField}
 
     def __init__(self):
         super().__init__()
@@ -33,7 +30,7 @@ class EmailMessageType(QuickbooksBaseObject):
 
 
 class EmailMessagesPrefs(QuickbooksBaseObject):
-    class_dict = {
+    class_dict: ClassVar[dict[str, type]] = {
         "InvoiceMessage": EmailMessageType,
         "EstimateMessage": EmailMessageType,
         "SalesReceiptMessage": EmailMessageType,
@@ -49,7 +46,6 @@ class EmailMessagesPrefs(QuickbooksBaseObject):
 
 
 class ProductAndServicesPrefs(QuickbooksBaseObject):
-
     def __init__(self):
         super().__init__()
         self.QuantityWithPriceAndRate = True
@@ -59,7 +55,6 @@ class ProductAndServicesPrefs(QuickbooksBaseObject):
 
 
 class ReportPrefs(QuickbooksBaseObject):
-
     def __init__(self):
         super().__init__()
         self.ReportBasis = "Accrual"  # or "Cash"
@@ -91,12 +86,8 @@ class ClassTrackingPerTxnLine(QuickbooksBaseObject):
 
 
 class SalesFormsPrefs(QuickbooksBaseObject):
-    class_dict = {
-        "DefaultTerms": Ref,
-    }
-    detail_dict = {
-        "CustomField": PreferencesCustomFieldGroup
-    }
+    class_dict: ClassVar[dict[str, type]] = {"DefaultTerms": Ref}
+    detail_dict: ClassVar[dict[str, type]] = {"CustomField": PreferencesCustomFieldGroup}
 
     def __init__(self):
         super().__init__()
@@ -124,9 +115,7 @@ class SalesFormsPrefs(QuickbooksBaseObject):
 
 
 class VendorAndPurchasesPrefs(QuickbooksBaseObject):
-    detail_dict = {
-        "POCustomField": PreferencesCustomFieldGroup
-    }
+    detail_dict: ClassVar[dict[str, type]] = {"POCustomField": PreferencesCustomFieldGroup}
 
     def __init__(self):
         super().__init__()
@@ -136,9 +125,7 @@ class VendorAndPurchasesPrefs(QuickbooksBaseObject):
 
 
 class TaxPrefs(QuickbooksBaseObject):
-    class_dict = {
-        "TaxGroupCodeRef": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"TaxGroupCodeRef": Ref}
 
     def __init__(self):
         super().__init__()
@@ -154,9 +141,7 @@ class NameValue(QuickbooksBaseObject):
 
 
 class OtherPrefs(QuickbooksBaseObject):
-    list_dict = {
-        "NameValue": NameValue
-    }
+    list_dict: ClassVar[dict[str, type]] = {"NameValue": NameValue}
 
     def __init__(self):
         super().__init__()
@@ -174,16 +159,13 @@ class TimeTrackingPrefs(QuickbooksBaseObject):
 
 
 class CurrencyPrefs(QuickbooksBaseObject):
-    class_dict = {
-        "HomeCurrency": Ref
-    }
+    class_dict: ClassVar[dict[str, type]] = {"HomeCurrency": Ref}
 
     def __init__(self):
         super().__init__()
         self.HomeCurrency = None
 
 
-@python_2_unicode_compatible
 class Preferences(PrefMixin, UpdateNoIdMixin, QuickbooksTransactionEntity):
     """
     QBO definition: The Preferences resource represents a set of company preferences that
@@ -193,17 +175,17 @@ class Preferences(PrefMixin, UpdateNoIdMixin, QuickbooksTransactionEntity):
     because a lot of them control UI behavior in the application and may not be applicable for apps.
     """
 
-    class_dict = {
-        'EmailMessagesPrefs': EmailMessagesPrefs,
-        'ProductAndServicesPrefs': ProductAndServicesPrefs,
-        'ReportPrefs': ReportPrefs,
-        'AccountingInfoPrefs': AccountingInfoPrefs,
-        'SalesFormsPrefs': SalesFormsPrefs,
-        'VendorAndPurchasesPrefs': VendorAndPurchasesPrefs,
-        'TaxPrefs': TaxPrefs,
-        'OtherPrefs': OtherPrefs,
-        'TimeTrackingPrefs': TimeTrackingPrefs,
-        'CurrencyPrefs': CurrencyPrefs,
+    class_dict: ClassVar[dict[str, type]] = {
+        "EmailMessagesPrefs": EmailMessagesPrefs,
+        "ProductAndServicesPrefs": ProductAndServicesPrefs,
+        "ReportPrefs": ReportPrefs,
+        "AccountingInfoPrefs": AccountingInfoPrefs,
+        "SalesFormsPrefs": SalesFormsPrefs,
+        "VendorAndPurchasesPrefs": VendorAndPurchasesPrefs,
+        "TaxPrefs": TaxPrefs,
+        "OtherPrefs": OtherPrefs,
+        "TimeTrackingPrefs": TimeTrackingPrefs,
+        "CurrencyPrefs": CurrencyPrefs,
     }
 
     qbo_object_name = "Preferences"
@@ -222,4 +204,4 @@ class Preferences(PrefMixin, UpdateNoIdMixin, QuickbooksTransactionEntity):
         self.CurrencyPrefs = None
 
     def __str__(self):
-        return 'Preferences {0}'.format(self.Id)
+        return f"Preferences {self.Id}"

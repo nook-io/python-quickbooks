@@ -1,9 +1,9 @@
-from six import python_2_unicode_compatible
-from .base import Ref, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin
-from ..mixins import DeleteMixin
+from typing import ClassVar
+
+from quickbooks.mixins import DeleteMixin
+from quickbooks.objects.base import LinkedTxnMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, Ref
 
 
-@python_2_unicode_compatible
 class CreditCardPayment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransactionEntity, LinkedTxnMixin):
     """
     QBO definition: A Represents a financial transaction to record a Credit Card balance payment
@@ -14,16 +14,14 @@ class CreditCardPayment(DeleteMixin, QuickbooksManagedObject, QuickbooksTransact
 
     https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/creditcardpayment
     """
-    class_dict = {
-        "BankAccountRef": Ref,
-        "CreditCardAccountRef": Ref,
-    }
+
+    class_dict: ClassVar[dict[str, type]] = {"BankAccountRef": Ref, "CreditCardAccountRef": Ref}
 
     qbo_object_name = "CreditCardPayment"
     qbo_json_object_name = "CreditCardPaymentTxn"  # JSON object name doesn't match the endpoint name - Thanks Intuit!
 
     def __init__(self):
-        super(CreditCardPayment, self).__init__()
+        super().__init__()
         self.TxnDate = None
         self.Amount = 0
         self.PrivateNote = None
