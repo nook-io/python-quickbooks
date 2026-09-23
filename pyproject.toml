@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "python-quickbooks"
-version = "0.9.3"
+version = "0.9.4"
 description = "A Python library for accessing the QuickBooks API."
 readme = "README.md"
 license = "MIT"
